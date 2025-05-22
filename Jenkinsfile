@@ -1,22 +1,30 @@
 pipeline {
-    agent any // Esto le dice a Jenkins que el pipeline puede ejecutarse en cualquier agente disponible.
+    agent any
 
     stages {
-        stage('Checkout Code') { // Primera etapa: obtener el código del repositorio
+        stage('Checkout Code') {
             steps {
                 echo 'Clonando el repositorio Git...'
-                checkout scm // Este paso le dice a Jenkins que clone el repositorio configurado en el trabajo.
+                checkout scm
                 echo 'Código clonado.'
             }
         }
-        stage('Print Message') { // Segunda etapa: imprimir un mensaje simple
+        stage('Run Basic Tests') { // <--- ASEGÚRATE DE QUE ESTA ETAPA ESTÉ AQUÍ
+            steps {
+                echo 'Iniciando las pruebas automatizadas...'
+                // Descomenta la línea correcta para tu sistema operativo
+                bat 'run_tests.bat' // Si estás en Windows
+                // sh './run_tests.sh' // Si estás en macOS/Linux
+                echo 'Pruebas completadas.'
+            }
+        }
+        stage('Print Message') {
             steps {
                 echo '¡Hola Mundo desde tu primer Jenkins Pipeline!'
-                // Aquí podrías agregar más pasos en el futuro, como ejecutar comandos para compilar, probar, etc.
             }
         }
     }
-    post { // La sección 'post' define acciones a ejecutar después de que el pipeline termine.
+    post {
         always {
             echo 'El pipeline ha finalizado.'
         }
@@ -24,7 +32,7 @@ pipeline {
             echo '¡El pipeline se ejecutó con éxito!'
         }
         failure {
-            echo '¡El pipeline falló!'
+            echo '¡El pipeline falló! Se encontraron problemas.'
         }
     }
 }
